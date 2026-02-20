@@ -214,16 +214,23 @@
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            object-fit: contain; /* Imagen completa sin recortes */
+            object-fit: contain;
             background: rgba(0, 0, 0, 0.5);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8), 0 0 0 3px rgba(255, 255, 255, 0.3), 0 0 30px #8a2be2;
             pointer-events: auto;
             cursor: pointer;
             transform-style: preserve-3d;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.2s, box-shadow 0.3s;
             left: 0;
             top: 0;
             padding: 5px;
+            /* Mejoras táctiles */
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .photo-sphere img:active {
+            transform: scale(1.05); /* Feedback visual al tocar */
         }
 
         .photo-sphere img:hover {
@@ -284,8 +291,8 @@
         /* Responsive para móviles */
         @media (max-width: 768px) {
             .photo-sphere img {
-                width: 80px;
-                height: 80px;
+                width: 90px;  /* Un poco más grande para facilitar el toque */
+                height: 90px;
             }
             .login-card {
                 padding: 2rem 1.5rem;
@@ -622,7 +629,7 @@
                     "Recuerdo imborrable", "Latidos", "Alma gemela", "Destino", "Felicidad",
                     "Sueños", "Caricia", "Mi lugar", "Eternidad", "Confianza",
                     "Paz", "Alegría", "Locura", "Pasión", "Ternura", "Infinito"
-                ]; // Usaremos las primeras 21 (índice 0 a 20) y si hay más, se repiten cíclicamente
+                ];
 
                 const radio = sphereRadius;
                 const phi = Math.PI * (3 - Math.sqrt(5));
@@ -647,6 +654,11 @@
                     img.style.transform = `translate3d(${posX}px, ${posY}px, ${posZ}px) translate(-50%, -50%)`;
 
                     img.addEventListener('click', () => handlePhotoClick(img));
+                    // También soportar touchstart para mayor rapidez en móviles
+                    img.addEventListener('touchstart', (e) => {
+                        e.preventDefault(); // Evita el zoom o scroll accidental
+                        handlePhotoClick(img);
+                    }, { passive: false });
 
                     photoSphere.appendChild(img);
                 }
@@ -669,7 +681,7 @@
                     lastMouseX = e.touches[0].clientX;
                     lastMouseY = e.touches[0].clientY;
                     autoRotate = false;
-                });
+                }, { passive: false });
 
                 window.addEventListener('mousemove', (e) => {
                     if (!isDragging) return;
@@ -700,7 +712,7 @@
 
                     lastMouseX = e.touches[0].clientX;
                     lastMouseY = e.touches[0].clientY;
-                });
+                }, { passive: false });
 
                 window.addEventListener('mouseup', () => {
                     isDragging = false;
@@ -730,10 +742,11 @@
                 viewerImg.src = img.src;
                 viewerPhrase.textContent = img.dataset.phrase;
                 photoViewer.classList.remove('hidden');
+                // Mostrar solo 2 segundos para mayor agilidad
                 viewerTimeout = setTimeout(() => {
                     photoViewer.classList.add('hidden');
                     viewerTimeout = null;
-                }, 3000);
+                }, 2000); // Reducido de 3000 a 2000 ms
             }
 
             function initGalaxy() {
