@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Galaxia de Recuerdos · Bárbara</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            background: #03050a;
+        }
+
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: opacity 1.2s ease-in-out, visibility 1.2s ease-in-out;
+        }
+
+        .hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* ----- LOGIN SCREEN ----- */
+        .login-screen {
+            z-index: 10;
+        }
+
+        #login-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .login-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 15, 30, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 40px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(255, 255, 255, 0.1), 0 0 30px rgba(138, 43, 226, 0.6);
+            text-align: center;
+            z-index: 20;
+            width: 90%;
+            max-width: 420px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: cardPulse 4s infinite alternate;
+        }
+
+        @keyframes cardPulse {
+            0% { box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 0 2px rgba(255, 255, 255, 0.1), 0 0 30px rgba(138, 43, 226, 0.4); }
+            100% { box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 0 3px rgba(255, 255, 255, 0.3), 0 0 60px rgba(186, 85, 211, 0.8); }
+        }
+
+        .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 60px #b026ff;
+            margin-bottom: 0.5rem;
+            letter-spacing: 4px;
+            animation: titleGlow 3s infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 60px #b026ff; }
+            to { text-shadow: 0 0 50px rgba(255, 255, 255, 1), 0 0 90px #ff69b4; }
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+            margin-bottom: 2.5rem;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            word-spacing: 6px;
+        }
+
+        .input-group {
+            margin-bottom: 1.8rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 60px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            color: white;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #b026ff;
+            box-shadow: 0 0 20px #b026ff;
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        #login-btn {
+            background: linear-gradient(135deg, #fff, #f0e6ff);
+            color: #0d0b1a;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            box-shadow: 0 5px 20px rgba(186, 85, 211, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #login-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        #login-btn:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        #login-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px #b026ff;
+        }
+
+        .error {
+            color: #ff7b7b;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            height: 20px;
+            text-shadow: 0 0 8px red;
+        }
+
+        /* ----- GALAXY SCREEN ----- */
+        .galaxy-screen {
+            z-index: 5;
+        }
+
+        #galaxy-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            pointer-events: none;
+        }
+
+        .sphere-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 1px;
+            height: 1px;
+            transform-style: preserve-3d;
+            perspective: 1200px;
+            pointer-events: none;
+        }
+
+        .photo-sphere {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            transform-style: preserve-3d;
+            transform: rotateX(20deg) rotateY(30deg);
+            transition: transform 0.1s ease-out;
+            pointer-events: none;
+        }
+
+        .photo-sphere img {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8), 0 0 0 3px rgba(255, 255, 255, 0.3), 0 0 30px #8a2be2;
+            pointer-events: auto;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.3s, box-shadow 0.3s;
+            left: 0;
+            top: 0;
+        }
+
+        .photo-sphere img:hover {
+            box-shadow: 0 15px 30px black, 0 0 0 5px rgba(255, 255, 255, 0.6), 0 0 50px #ff69b4;
+        }
+
+        /* Visor de foto seleccionada */
+        .photo-viewer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(400px, 80vw);
+            height: min(400px, 80vw);
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .photo-viewer img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.8), 0 0 100px #ff69b4;
+            border: 4px solid white;
+            animation: viewerPulse 1.5s infinite alternate;
+        }
+
+        @keyframes viewerPulse {
+            from { box-shadow: 0 0 50px rgba(255, 255, 255, 0.8), 0 0 100px #ff69b4; }
+            to { box-shadow: 0 0 80px rgba(255, 255, 255, 1), 0 0 150px #b026ff; }
+        }
+
+        .viewer-phrase {
+            margin-top: 20px;
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            color: white;
+            text-shadow: 0 0 20px magenta;
+            background: rgba(0,0,0,0.5);
+            padding: 10px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(5px);
+            text-align: center;
+            width: 100%;
+        }
+
+        .photo-viewer.hidden {
+            display: none;
+        }
+
+        /* Responsive para móviles */
+        @media (max-width: 768px) {
+            .photo-sphere img {
+                width: 80px;
+                height: 80px;
+            }
+            .login-card {
+                padding: 2rem 1.5rem;
+            }
+            .title {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- PANTALLA DE LOGIN -->
+    <div id="login-screen" class="screen login-screen">
+        <canvas id="login-canvas"></canvas>
+        <div class="login-card">
+            <h1 class="title">Bárbara</h1>
+            <p class="subtitle">Ingresa para descubrir tu galaxia</p>
+            <form id="login-form">
+                <div class="input-group">
+                    <input type="text" id="username" placeholder="Usuario" value="Barbara" readonly>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" placeholder="Contraseña">
+                </div>
+                <button type="submit" id="login-btn">Entrar</button>
+                <p id="error-msg" class="error"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- GALAXIA DE FOTOS -->
+    <div id="galaxy-screen" class="screen galaxy-screen hidden">
+        <canvas id="galaxy-canvas"></canvas>
+        <div id="sphere-container" class="sphere-container">
+            <div id="photo-sphere" class="photo-sphere"></div>
+        </div>
+        <!-- Visor de foto seleccionada -->
+        <div id="photo-viewer" class="photo-viewer hidden">
+            <img src="" alt="" id="viewer-img">
+            <div id="viewer-phrase" class="viewer-phrase"></div>
+        </div>
+        <!-- Audio oculto sin controles (se reproduce desde el login) -->
+        <audio id="bg-music" loop preload="auto">
+            <source src="audio/audio.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Elementos DOM
+            const loginScreen = document.getElementById('login-screen');
+            const galaxyScreen = document.getElementById('galaxy-screen');
+            const loginForm = document.getElementById('login-form');
+            const passwordInput = document.getElementById('password');
+            const errorMsg = document.getElementById('error-msg');
+            const audio = document.getElementById('bg-music');
+            const photoSphere = document.getElementById('photo-sphere');
+            const photoViewer = document.getElementById('photo-viewer');
+            const viewerImg = document.getElementById('viewer-img');
+            const viewerPhrase = document.getElementById('viewer-phrase');
+            const loginCanvas = document.getElementById('login-canvas');
+            const galaxyCanvas = document.getElementById('galaxy-canvas');
+
+            // ---------- AUDIO: empezar desde el segundo 15 al cargar la página (en el login) ----------
+            let audioStarted = false;
+            function playAudioFrom15() {
+                if (audioStarted) return;
+                // Establecer el tiempo de inicio en 15 segundos
+                audio.currentTime = 15;
+                audio.play()
+                    .then(() => {
+                        audioStarted = true;
+                        console.log('Audio reproduciéndose desde el segundo 15');
+                    })
+                    .catch(err => {
+                        console.log('Autoplay bloqueado, se reproducirá al hacer clic en Entrar', err);
+                    });
+            }
+            // Intentar reproducir inmediatamente (apenas carga la página, en el login)
+            playAudioFrom15();
+
+            // Si el usuario hace clic en el botón de login (por si el autoplay fue bloqueado)
+            loginForm.addEventListener('submit', function (e) {
+                // No prevenimos el submit todavía, solo intentamos el audio si no ha empezado
+                if (!audioStarted) {
+                    audio.currentTime = 15;
+                    audio.play().then(() => {
+                        audioStarted = true;
+                    }).catch(err => console.log('Audio sigue bloqueado', err));
+                }
+                // La validación de contraseña se maneja en el evento submit normal (más abajo)
+            });
+
+            // ---------- LOGIN: CANVAS DE PARTÍCULAS ----------
+            let loginCtx = loginCanvas.getContext('2d');
+            let particles = [];
+            const PARTICLE_COUNT = 200;
+
+            function initLoginCanvas() {
+                resizeLoginCanvas();
+                createParticles();
+                animateLogin();
+                window.addEventListener('resize', resizeLoginCanvas);
+            }
+
+            function resizeLoginCanvas() {
+                loginCanvas.width = window.innerWidth;
+                loginCanvas.height = window.innerHeight;
+            }
+
+            function createParticles() {
+                particles = [];
+                for (let i = 0; i < PARTICLE_COUNT; i++) {
+                    particles.push({
+                        x: Math.random() * loginCanvas.width,
+                        y: Math.random() * loginCanvas.height,
+                        radius: Math.random() * 3 + 1,
+                        speedX: (Math.random() - 0.5) * 0.5,
+                        speedY: (Math.random() - 0.5) * 0.5,
+                        color: `rgba(${150 + Math.random()*100}, ${100 + Math.random()*100}, 255, ${Math.random()*0.7+0.3})`
+                    });
+                }
+            }
+
+            function animateLogin() {
+                if (!loginCtx) return;
+                loginCtx.clearRect(0, 0, loginCanvas.width, loginCanvas.height);
+
+                const grad = loginCtx.createRadialGradient(
+                    loginCanvas.width/2, loginCanvas.height/2, 50,
+                    loginCanvas.width/2, loginCanvas.height/2, loginCanvas.width/2
+                );
+                grad.addColorStop(0, '#0a0515');
+                grad.addColorStop(1, '#000');
+                loginCtx.fillStyle = grad;
+                loginCtx.fillRect(0, 0, loginCanvas.width, loginCanvas.height);
+
+                particles.forEach(p => {
+                    loginCtx.beginPath();
+                    loginCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    loginCtx.fillStyle = p.color;
+                    loginCtx.fill();
+
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+
+                    if (p.x < 0 || p.x > loginCanvas.width) p.speedX *= -1;
+                    if (p.y < 0 || p.y > loginCanvas.height) p.speedY *= -1;
+                });
+
+                requestAnimationFrame(animateLogin);
+            }
+
+            initLoginCanvas();
+
+            // ---------- LOGIN: VALIDACIÓN (CONTRASEÑA) ----------
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault(); // Prevenimos el envío del formulario para manejar la validación
+                const pass = passwordInput.value.trim();
+
+                if (pass === '22072004') {
+                    errorMsg.textContent = '';
+                    loginScreen.classList.add('hidden');
+                    galaxyScreen.classList.remove('hidden');
+
+                    initGalaxy();
+                } else {
+                    errorMsg.textContent = 'Contraseña incorrecta';
+                    passwordInput.value = '';
+                }
+            });
+
+            // ---------- GALAXIA: INICIALIZACIÓN ----------
+            let galaxyCtx = galaxyCanvas.getContext('2d');
+            let stars = [];
+            let shootingStars = [];
+            let hearts = [];
+            const STAR_COUNT = 200;
+            const SHOOTING_STAR_COUNT = 8;
+            const HEART_COUNT = 40;
+            let sphereRotation = { x: 20, y: 30 };
+            let targetRotation = { x: 20, y: 30 };
+            let isDragging = false;
+            let lastMouseX = 0, lastMouseY = 0;
+            let autoRotate = true;
+            let autoRotateSpeed = 0.2;
+            let viewerTimeout = null;
+
+            // Radio de la esfera responsive
+            let sphereRadius = window.innerWidth < 768 ? 200 : 400;
+
+            function initGalaxy() {
+                resizeGalaxyCanvas();
+                createStars();
+                createShootingStars();
+                createHearts();
+                createPhotoSphere();
+                animateGalaxy();
+                initDragControl();
+                window.addEventListener('resize', () => {
+                    resizeGalaxyCanvas();
+                });
+                updateSphereRotation();
+            }
+
+            function resizeGalaxyCanvas() {
+                galaxyCanvas.width = window.innerWidth;
+                galaxyCanvas.height = window.innerHeight;
+            }
+
+            function createStars() {
+                stars = [];
+                for (let i = 0; i < STAR_COUNT; i++) {
+                    stars.push({
+                        x: Math.random() * galaxyCanvas.width,
+                        y: Math.random() * galaxyCanvas.height,
+                        radius: Math.random() * 2.5 + 0.5,
+                        brightness: Math.random() * 0.8 + 0.2,
+                        speed: 0.02 + Math.random() * 0.05,
+                        angle: Math.random() * Math.PI * 2
+                    });
+                }
+            }
+
+            function createShootingStars() {
+                for (let i = 0; i < SHOOTING_STAR_COUNT; i++) {
+                    shootingStars.push({
+                        x: Math.random() * galaxyCanvas.width,
+                        y: Math.random() * galaxyCanvas.height * 0.5,
+                        length: 50 + Math.random() * 100,
+                        speed: 5 + Math.random() * 10,
+                        angle: Math.PI / 4 + (Math.random() - 0.5) * 0.2,
+                        opacity: 0.8
+                    });
+                }
+            }
+
+            function createHearts() {
+                for (let i = 0; i < HEART_COUNT; i++) {
+                    hearts.push({
+                        x: Math.random() * galaxyCanvas.width,
+                        y: Math.random() * galaxyCanvas.height,
+                        size: 10 + Math.random() * 15,
+                        speedY: 1 + Math.random() * 3,
+                        speedX: (Math.random() - 0.5) * 0.5,
+                        color: `rgba(255, ${100 + Math.random()*100}, 200, 0.8)`
+                    });
+                }
+            }
+
+            function animateGalaxy() {
+                if (!galaxyCtx) return;
+                galaxyCtx.clearRect(0, 0, galaxyCanvas.width, galaxyCanvas.height);
+
+                // Fondo galaxia
+                const gradient = galaxyCtx.createRadialGradient(
+                    galaxyCanvas.width * 0.5, galaxyCanvas.height * 0.5, 50,
+                    galaxyCanvas.width * 0.5, galaxyCanvas.height * 0.5, galaxyCanvas.width * 0.8
+                );
+                gradient.addColorStop(0, '#120b2b');
+                gradient.addColorStop(0.6, '#030514');
+                gradient.addColorStop(1, '#000');
+                galaxyCtx.fillStyle = gradient;
+                galaxyCtx.fillRect(0, 0, galaxyCanvas.width, galaxyCanvas.height);
+
+                // Nebulosas
+                galaxyCtx.globalCompositeOperation = 'lighter';
+                for (let i = 0; i < 5; i++) {
+                    const x = (Math.sin(Date.now() * 0.0005 + i) * 0.3 + 0.5) * galaxyCanvas.width;
+                    const y = (Math.cos(Date.now() * 0.0004 + i) * 0.3 + 0.5) * galaxyCanvas.height;
+                    const rad = 200 + Math.sin(Date.now() * 0.001 + i) * 80;
+                    const grad = galaxyCtx.createRadialGradient(x, y, 10, x, y, rad);
+                    grad.addColorStop(0, `rgba(100, 50, 200, 0.2)`);
+                    grad.addColorStop(0.8, `rgba(20, 10, 40, 0)`);
+                    galaxyCtx.fillStyle = grad;
+                    galaxyCtx.beginPath();
+                    galaxyCtx.arc(x, y, rad, 0, Math.PI * 2);
+                    galaxyCtx.fill();
+                }
+                galaxyCtx.globalCompositeOperation = 'source-over';
+
+                // Estrellas normales
+                stars.forEach(s => {
+                    galaxyCtx.beginPath();
+                    galaxyCtx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+                    galaxyCtx.fillStyle = `rgba(255, 255, 255, ${s.brightness * (0.6 + 0.4 * Math.sin(Date.now() * 0.002 + s.x))})`;
+                    galaxyCtx.fill();
+
+                    s.x += Math.cos(s.angle) * s.speed;
+                    s.y += Math.sin(s.angle) * s.speed;
+
+                    if (s.x < 0 || s.x > galaxyCanvas.width) s.angle = Math.PI - s.angle;
+                    if (s.y < 0 || s.y > galaxyCanvas.height) s.angle = -s.angle;
+                });
+
+                // Estrellas fugaces
+                shootingStars.forEach(star => {
+                    galaxyCtx.beginPath();
+                    galaxyCtx.moveTo(star.x, star.y);
+                    galaxyCtx.lineTo(star.x - Math.cos(star.angle) * star.length, star.y - Math.sin(star.angle) * star.length);
+                    galaxyCtx.strokeStyle = `rgba(255, 255, 255, ${star.opacity})`;
+                    galaxyCtx.lineWidth = 2;
+                    galaxyCtx.stroke();
+
+                    galaxyCtx.beginPath();
+                    galaxyCtx.arc(star.x, star.y, 3, 0, 2 * Math.PI);
+                    galaxyCtx.fillStyle = 'white';
+                    galaxyCtx.fill();
+
+                    star.x += Math.cos(star.angle) * star.speed;
+                    star.y += Math.sin(star.angle) * star.speed;
+
+                    if (star.x > galaxyCanvas.width + star.length || star.x < -star.length || star.y > galaxyCanvas.height + star.length) {
+                        star.x = Math.random() * galaxyCanvas.width;
+                        star.y = Math.random() * galaxyCanvas.height * 0.3;
+                        star.angle = Math.PI / 4 + (Math.random() - 0.5) * 0.2;
+                        star.speed = 5 + Math.random() * 10;
+                    }
+                });
+
+                // Corazones cayendo
+                hearts.forEach(heart => {
+                    galaxyCtx.font = `${heart.size}px Arial`;
+                    galaxyCtx.fillStyle = heart.color;
+                    galaxyCtx.fillText('❤️', heart.x, heart.y);
+
+                    heart.y += heart.speedY;
+                    heart.x += heart.speedX;
+
+                    if (heart.y > galaxyCanvas.height + heart.size) {
+                        heart.y = -heart.size;
+                        heart.x = Math.random() * galaxyCanvas.width;
+                        heart.speedY = 1 + Math.random() * 3;
+                    }
+                });
+
+                requestAnimationFrame(animateGalaxy);
+            }
+
+            // ---------- ESFERA DE FOTOS (22 imágenes de la carpeta img) ----------
+            function createPhotoSphere() {
+                while (photoSphere.firstChild) {
+                    photoSphere.removeChild(photoSphere.firstChild);
+                }
+
+                const totalFotos = 22;
+                const frases = [
+                    "Eres mi luz", "Risas infinitas", "Momento mágico", "Siempre juntos", "Cómplices",
+                    "Aventura", "Amor eterno", "Tu sonrisa", "Abrazo sincero", "Estrella fugaz",
+                    "Recuerdo imborrable", "Latidos", "Alma gemela", "Destino", "Felicidad",
+                    "Sueños", "Caricia", "Mi lugar", "Eternidad", "Confianza",
+                    "Paz", "Alegría", "Locura", "Pasión", "Ternura", "Infinito"
+                ];
+
+                const radio = sphereRadius;
+                const phi = Math.PI * (3 - Math.sqrt(5));
+
+                for (let i = 0; i < totalFotos; i++) {
+                    const y = 1 - (i / (totalFotos - 1)) * 2;
+                    const radiusAtY = Math.sqrt(1 - y * y);
+                    const theta = phi * i;
+
+                    const x = Math.cos(theta) * radiusAtY;
+                    const z = Math.sin(theta) * radiusAtY;
+
+                    const img = document.createElement('img');
+                    img.src = `img/${i+1}.jpg`;
+                    img.alt = `Recuerdo ${i + 1}`;
+                    img.dataset.index = i;
+                    img.dataset.phrase = frases[i % frases.length];
+
+                    const posX = x * radio;
+                    const posY = y * radio;
+                    const posZ = z * radio;
+
+                    img.style.transform = `translate3d(${posX}px, ${posY}px, ${posZ}px) translate(-50%, -50%)`;
+
+                    img.addEventListener('click', () => handlePhotoClick(img));
+
+                    photoSphere.appendChild(img);
+                }
+            }
+
+            // ---------- CONTROL DE ROTACIÓN (ARRastre táctil y mouse) ----------
+            function initDragControl() {
+                const container = document.querySelector('.sphere-container');
+
+                container.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    lastMouseX = e.clientX;
+                    lastMouseY = e.clientY;
+                    autoRotate = false;
+                });
+
+                container.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    isDragging = true;
+                    lastMouseX = e.touches[0].clientX;
+                    lastMouseY = e.touches[0].clientY;
+                    autoRotate = false;
+                });
+
+                window.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    if (!photoViewer.classList.contains('hidden')) return;
+
+                    const deltaX = e.clientX - lastMouseX;
+                    const deltaY = e.clientY - lastMouseY;
+
+                    targetRotation.y += deltaX * 0.5;
+                    targetRotation.x += deltaY * 0.3;
+                    targetRotation.x = Math.max(-80, Math.min(80, targetRotation.x));
+
+                    lastMouseX = e.clientX;
+                    lastMouseY = e.clientY;
+                });
+
+                window.addEventListener('touchmove', (e) => {
+                    if (!isDragging) return;
+                    e.preventDefault();
+                    if (!photoViewer.classList.contains('hidden')) return;
+
+                    const deltaX = e.touches[0].clientX - lastMouseX;
+                    const deltaY = e.touches[0].clientY - lastMouseY;
+
+                    targetRotation.y += deltaX * 0.5;
+                    targetRotation.x += deltaY * 0.3;
+                    targetRotation.x = Math.max(-80, Math.min(80, targetRotation.x));
+
+                    lastMouseX = e.touches[0].clientX;
+                    lastMouseY = e.touches[0].clientY;
+                });
+
+                window.addEventListener('mouseup', () => {
+                    isDragging = false;
+                    autoRotate = true;
+                });
+
+                window.addEventListener('touchend', () => {
+                    isDragging = false;
+                    autoRotate = true;
+                });
+            }
+
+            // ---------- LOOP DE ROTACIÓN DE LA ESFERA ----------
+            function updateSphereRotation() {
+                if (autoRotate && !isDragging) {
+                    targetRotation.y += autoRotateSpeed;
+                }
+
+                sphereRotation.x += (targetRotation.x - sphereRotation.x) * 0.1;
+                sphereRotation.y += (targetRotation.y - sphereRotation.y) * 0.1;
+
+                photoSphere.style.transform = `rotateX(${sphereRotation.x}deg) rotateY(${sphereRotation.y}deg)`;
+                requestAnimationFrame(updateSphereRotation);
+            }
+
+            // ---------- MANEJAR CLICK EN FOTO ----------
+            function handlePhotoClick(img) {
+                if (viewerTimeout) {
+                    clearTimeout(viewerTimeout);
+                }
+
+                viewerImg.src = img.src;
+                viewerPhrase.textContent = img.dataset.phrase;
+                photoViewer.classList.remove('hidden');
+
+                viewerTimeout = setTimeout(() => {
+                    photoViewer.classList.add('hidden');
+                    viewerTimeout = null;
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>
