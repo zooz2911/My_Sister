@@ -214,7 +214,8 @@
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            object-fit: cover;
+            object-fit: contain; /* Cambiado a contain para ver la imagen completa */
+            background: rgba(0, 0, 0, 0.5); /* Fondo oscuro para rellenar bordes */
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8), 0 0 0 3px rgba(255, 255, 255, 0.3), 0 0 30px #8a2be2;
             pointer-events: auto;
             cursor: pointer;
@@ -222,6 +223,7 @@
             transition: transform 0.3s, box-shadow 0.3s;
             left: 0;
             top: 0;
+            padding: 5px; /* Pequeño espacio para que la imagen no toque el borde */
         }
 
         .photo-sphere img:hover {
@@ -247,11 +249,13 @@
         .photo-viewer img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain; /* Imagen completa sin recortes */
             border-radius: 50%;
+            background: rgba(0, 0, 0, 0.5); /* Fondo oscuro */
             box-shadow: 0 0 50px rgba(255, 255, 255, 0.8), 0 0 100px #ff69b4;
             border: 4px solid white;
             animation: viewerPulse 1.5s infinite alternate;
+            padding: 5px;
         }
 
         @keyframes viewerPulse {
@@ -323,7 +327,7 @@
             <img src="" alt="" id="viewer-img">
             <div id="viewer-phrase" class="viewer-phrase"></div>
         </div>
-        <!-- Audio oculto sin controles (se reproduce desde el login) -->
+        <!-- Audio oculto sin controles -->
         <audio id="bg-music" loop preload="auto">
             <source src="audio/audio.mp3" type="audio/mpeg">
         </audio>
@@ -345,7 +349,7 @@
             const loginCanvas = document.getElementById('login-canvas');
             const galaxyCanvas = document.getElementById('galaxy-canvas');
 
-            // ---------- AUDIO: empezar desde el segundo 15 al cargar la página (en el login) ----------
+            // ---------- AUDIO: empezar desde el segundo 15 al cargar la página ----------
             let audioStarted = false;
             function playAudioFrom15() {
                 if (audioStarted) return;
@@ -360,19 +364,19 @@
                         console.log('Autoplay bloqueado, se reproducirá al hacer clic en Entrar', err);
                     });
             }
-            // Intentar reproducir inmediatamente (apenas carga la página, en el login)
+            // Intentar reproducir inmediatamente
             playAudioFrom15();
 
-            // Si el usuario hace clic en el botón de login (por si el autoplay fue bloqueado)
+            // Si el usuario hace clic en el botón de login, también intentamos reproducir (por si acaso)
             loginForm.addEventListener('submit', function (e) {
-                // No prevenimos el submit todavía, solo intentamos el audio si no ha empezado
+                e.preventDefault(); // Lo manejamos después, pero queremos capturar el evento para audio
                 if (!audioStarted) {
                     audio.currentTime = 15;
                     audio.play().then(() => {
                         audioStarted = true;
                     }).catch(err => console.log('Audio sigue bloqueado', err));
                 }
-                // La validación de contraseña se maneja en el evento submit normal (más abajo)
+                // Luego sigue la validación de contraseña
             });
 
             // ---------- LOGIN: CANVAS DE PARTÍCULAS ----------
@@ -439,7 +443,7 @@
 
             // ---------- LOGIN: VALIDACIÓN (CONTRASEÑA) ----------
             loginForm.addEventListener('submit', (e) => {
-                e.preventDefault(); // Prevenimos el envío del formulario para manejar la validación
+                e.preventDefault();
                 const pass = passwordInput.value.trim();
 
                 if (pass === '22072004') {
