@@ -214,8 +214,8 @@
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            object-fit: contain; /* Cambiado a contain para ver la imagen completa */
-            background: rgba(0, 0, 0, 0.5); /* Fondo oscuro para rellenar bordes */
+            object-fit: contain; /* Imagen completa sin recortes */
+            background: rgba(0, 0, 0, 0.5);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8), 0 0 0 3px rgba(255, 255, 255, 0.3), 0 0 30px #8a2be2;
             pointer-events: auto;
             cursor: pointer;
@@ -223,7 +223,7 @@
             transition: transform 0.3s, box-shadow 0.3s;
             left: 0;
             top: 0;
-            padding: 5px; /* Pequeño espacio para que la imagen no toque el borde */
+            padding: 5px;
         }
 
         .photo-sphere img:hover {
@@ -249,9 +249,9 @@
         .photo-viewer img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Imagen completa sin recortes */
+            object-fit: contain;
             border-radius: 50%;
-            background: rgba(0, 0, 0, 0.5); /* Fondo oscuro */
+            background: rgba(0, 0, 0, 0.5);
             box-shadow: 0 0 50px rgba(255, 255, 255, 0.8), 0 0 100px #ff69b4;
             border: 4px solid white;
             animation: viewerPulse 1.5s infinite alternate;
@@ -322,12 +322,10 @@
         <div id="sphere-container" class="sphere-container">
             <div id="photo-sphere" class="photo-sphere"></div>
         </div>
-        <!-- Visor de foto seleccionada -->
         <div id="photo-viewer" class="photo-viewer hidden">
             <img src="" alt="" id="viewer-img">
             <div id="viewer-phrase" class="viewer-phrase"></div>
         </div>
-        <!-- Audio oculto sin controles -->
         <audio id="bg-music" loop preload="auto">
             <source src="audio/audio.mp3" type="audio/mpeg">
         </audio>
@@ -353,7 +351,6 @@
             let audioStarted = false;
             function playAudioFrom15() {
                 if (audioStarted) return;
-                // Establecer el tiempo de inicio en 15 segundos
                 audio.currentTime = 15;
                 audio.play()
                     .then(() => {
@@ -383,13 +380,6 @@
             let loginCtx = loginCanvas.getContext('2d');
             let particles = [];
             const PARTICLE_COUNT = 200;
-
-            function initLoginCanvas() {
-                resizeLoginCanvas();
-                createParticles();
-                animateLogin();
-                window.addEventListener('resize', resizeLoginCanvas);
-            }
 
             function resizeLoginCanvas() {
                 loginCanvas.width = window.innerWidth;
@@ -439,9 +429,15 @@
                 requestAnimationFrame(animateLogin);
             }
 
+            function initLoginCanvas() {
+                resizeLoginCanvas();
+                createParticles();
+                animateLogin();
+                window.addEventListener('resize', resizeLoginCanvas);
+            }
             initLoginCanvas();
 
-            // ---------- LOGIN: VALIDACIÓN (CONTRASEÑA) ----------
+            // ---------- LOGIN: VALIDACIÓN ----------
             loginForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const pass = passwordInput.value.trim();
@@ -450,7 +446,6 @@
                     errorMsg.textContent = '';
                     loginScreen.classList.add('hidden');
                     galaxyScreen.classList.remove('hidden');
-
                     initGalaxy();
                 } else {
                     errorMsg.textContent = 'Contraseña incorrecta';
@@ -473,23 +468,7 @@
             let autoRotate = true;
             let autoRotateSpeed = 0.2;
             let viewerTimeout = null;
-
-            // Radio de la esfera responsive
             let sphereRadius = window.innerWidth < 768 ? 200 : 400;
-
-            function initGalaxy() {
-                resizeGalaxyCanvas();
-                createStars();
-                createShootingStars();
-                createHearts();
-                createPhotoSphere();
-                animateGalaxy();
-                initDragControl();
-                window.addEventListener('resize', () => {
-                    resizeGalaxyCanvas();
-                });
-                updateSphereRotation();
-            }
 
             function resizeGalaxyCanvas() {
                 galaxyCanvas.width = window.innerWidth;
@@ -497,7 +476,6 @@
             }
 
             function createStars() {
-                stars = [];
                 for (let i = 0; i < STAR_COUNT; i++) {
                     stars.push({
                         x: Math.random() * galaxyCanvas.width,
@@ -625,20 +603,26 @@
                 requestAnimationFrame(animateGalaxy);
             }
 
-            // ---------- ESFERA DE FOTOS (22 imágenes de la carpeta img) ----------
+            // ---------- ESFERA DE FOTOS (21 imágenes: se omite la número 6) ----------
             function createPhotoSphere() {
                 while (photoSphere.firstChild) {
                     photoSphere.removeChild(photoSphere.firstChild);
                 }
 
-                const totalFotos = 22;
+                // Números de imagen válidos: del 1 al 22 excepto el 6
+                const imageNumbers = [];
+                for (let i = 1; i <= 22; i++) {
+                    if (i !== 6) imageNumbers.push(i);
+                }
+                const totalFotos = imageNumbers.length; // 21
+
                 const frases = [
                     "Eres mi luz", "Risas infinitas", "Momento mágico", "Siempre juntos", "Cómplices",
                     "Aventura", "Amor eterno", "Tu sonrisa", "Abrazo sincero", "Estrella fugaz",
                     "Recuerdo imborrable", "Latidos", "Alma gemela", "Destino", "Felicidad",
                     "Sueños", "Caricia", "Mi lugar", "Eternidad", "Confianza",
                     "Paz", "Alegría", "Locura", "Pasión", "Ternura", "Infinito"
-                ];
+                ]; // Usaremos las primeras 21 (índice 0 a 20) y si hay más, se repiten cíclicamente
 
                 const radio = sphereRadius;
                 const phi = Math.PI * (3 - Math.sqrt(5));
@@ -652,9 +636,8 @@
                     const z = Math.sin(theta) * radiusAtY;
 
                     const img = document.createElement('img');
-                    img.src = `img/${i+1}.jpg`;
-                    img.alt = `Recuerdo ${i + 1}`;
-                    img.dataset.index = i;
+                    img.src = `img/${imageNumbers[i]}.jpg`; // nombre de archivo
+                    img.alt = `Recuerdo ${imageNumbers[i]}`;
                     img.dataset.phrase = frases[i % frases.length];
 
                     const posX = x * radio;
@@ -669,7 +652,7 @@
                 }
             }
 
-            // ---------- CONTROL DE ROTACIÓN (ARRastre táctil y mouse) ----------
+            // ---------- CONTROL DE ROTACIÓN ----------
             function initDragControl() {
                 const container = document.querySelector('.sphere-container');
 
@@ -730,7 +713,6 @@
                 });
             }
 
-            // ---------- LOOP DE ROTACIÓN DE LA ESFERA ----------
             function updateSphereRotation() {
                 if (autoRotate && !isDragging) {
                     targetRotation.y += autoRotateSpeed;
@@ -743,20 +725,27 @@
                 requestAnimationFrame(updateSphereRotation);
             }
 
-            // ---------- MANEJAR CLICK EN FOTO ----------
             function handlePhotoClick(img) {
-                if (viewerTimeout) {
-                    clearTimeout(viewerTimeout);
-                }
-
+                if (viewerTimeout) clearTimeout(viewerTimeout);
                 viewerImg.src = img.src;
                 viewerPhrase.textContent = img.dataset.phrase;
                 photoViewer.classList.remove('hidden');
-
                 viewerTimeout = setTimeout(() => {
                     photoViewer.classList.add('hidden');
                     viewerTimeout = null;
                 }, 3000);
+            }
+
+            function initGalaxy() {
+                resizeGalaxyCanvas();
+                createStars();
+                createShootingStars();
+                createHearts();
+                createPhotoSphere();
+                animateGalaxy();
+                initDragControl();
+                window.addEventListener('resize', resizeGalaxyCanvas);
+                updateSphereRotation();
             }
         });
     </script>
